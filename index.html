@@ -103,7 +103,7 @@ h2{font:600 22px/1.2 var(--display);margin:0}
       <span class="conn" id="conn">Checking…</span>
     </div>
     <h1>Archer's Mail Slot</h1>
-    <p class="lede">Write something and it lands with Archer. Claude reads each note, passes messages on to Archer, and makes what you ask for. It works on one note at a time, so you can have one note in line at once.</p>
+    <p class="lede">Write something and it lands with Archer. Claude sees each note the moment it arrives, passes messages on to Archer, and makes what you ask for. It works on one note at a time, so you can have one note in line at once.</p>
   </header>
 
   <section class="composer" aria-label="Write a note">
@@ -256,10 +256,10 @@ h2{font:600 22px/1.2 var(--display);margin:0}
       reachable = true;
       notes = j.notes || [];
       pending = notes.some(n => n.status === "queued" || n.status === "working");
-      if (j.problem) setConn("Taking a break", "busy");
-      else if (j.busy) setConn("Open · busy", "busy");
-      else setConn("Open", "open");
-      if (j.problem && pending) setStatus(j.problem);
+      if (!j.claudeHere) setConn("Claude is away", "busy");
+      else if (j.busy) setConn("Claude is busy", "busy");
+      else setConn("Claude is here", "open");
+      if (!j.claudeHere && pending) setStatus("Claude isn't connected right now. Your note is saved and stays in line until Claude is back.");
       render();
     } catch(e){
       reachable = false;
@@ -282,7 +282,7 @@ h2{font:600 22px/1.2 var(--display);margin:0}
       if (!r.ok){ setStatus(j.error || "That didn't go through. Try again.", "err"); }
       else {
         text.value = ""; store.del("slot.draft");
-        setStatus(kind === "make" ? "Dropped in! Claude will start on it soon. Keep this page open to see it." : "Dropped in! Archer will see it.", "good");
+        setStatus(kind === "make" ? "Dropped in! Keep this page open to see what Claude makes." : "Dropped in! Claude will pass it to Archer.", "good");
       }
     } catch(err){
       setStatus("The mail slot is closed right now (Archer's computer is off or asleep). Your note is still here, try again later.", "err");
